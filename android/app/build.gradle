@@ -1,0 +1,49 @@
+buildscript {
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10"
+    }
+}
+
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin" // Flutter Gradle Plugin
+}
+
+android {
+    namespace = "com.example.gls"
+    compileSdk = 34
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    defaultConfig {
+        applicationId = "com.example.gls"
+        minSdk = 21
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+[]
+    buildTypes {
+        release {
+            // Enable code shrinking to use shrinkResources
+            minifyEnabled true // Required for shrinkResources
+            shrinkResources true // Enable resource shrinking
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.debug // Temporary signing config
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}

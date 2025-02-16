@@ -6,6 +6,8 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:gls/helpers/coloors.dart';
 
 class VerifScreen extends StatelessWidget {
+  const VerifScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final LoginController controller = Get.find<LoginController>();

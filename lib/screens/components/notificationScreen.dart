@@ -10,6 +10,8 @@ class NotificationModel {
 }
 
 class NotificationAdminScreen extends StatefulWidget {
+  const NotificationAdminScreen({super.key});
+
   @override
   _NotificationAdminScreenState createState() => _NotificationAdminScreenState();
 }

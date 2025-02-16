@@ -5,20 +5,18 @@ class PointOfSale {
   final String name;
   final String? address;
   final String city;
-  final double? latitude;
-  final double? longitude;
-  final bool isActive;
-  final DateTime? deletedAt;
+  final int isActive;
+  final int ownerId;
+  final String owner;
 
   PointOfSale({
     required this.id,
     required this.name,
     this.address,
     required this.city,
-    this.latitude,
-    this.longitude,
     required this.isActive,
-    this.deletedAt,
+    required this.ownerId,
+    required this.owner,
   });
 
   factory PointOfSale.fromJson(Map<String, dynamic> json) {
@@ -27,10 +25,9 @@ class PointOfSale {
       name: json['name'],
       address: json['address'],
       city: json['city'],
-      latitude: json['latitude'] != null ? (json['latitude'] as num).toDouble() : null,
-      longitude: json['longitude'] != null ? (json['longitude'] as num).toDouble() : null,
-      isActive: json['is_active'] ?? false,
-      deletedAt: json['deleted_at'] != null ? DateTime.parse(json['deleted_at']) : null,
+      isActive: json['is_active'],
+      ownerId: json['owner_id'],
+      owner: json['owner'],
     );
   }
 
@@ -40,10 +37,9 @@ class PointOfSale {
       'name': name,
       'address': address,
       'city': city,
-      'latitude': latitude,
-      'longitude': longitude,
       'is_active': isActive,
-      'deleted_at': deletedAt?.toIso8601String(),
+      'owner_id': ownerId,
+      'owner': owner,
     };
   }
 

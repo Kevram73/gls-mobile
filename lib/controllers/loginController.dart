@@ -88,7 +88,7 @@ class LoginController extends GetxController {
       Fluttertoast.showToast(msg: response["error"], backgroundColor: Colors.red);
     } else {
       Fluttertoast.showToast(msg: "Compte créé ! Vérifiez votre OTP.", backgroundColor: Colors.green);
-      Get.to(() => VerifScreen()); // Redirige vers la vérification OTP
+      Get.to(() => const VerifScreen()); // Redirige vers la vérification OTP
     }
   }
 
@@ -129,7 +129,7 @@ class LoginController extends GetxController {
       Fluttertoast.showToast(msg: response["error"], backgroundColor: Colors.red);
     } else {
       Fluttertoast.showToast(msg: "OTP validé !", backgroundColor: Colors.green);
-      Get.offAll(LoginScreen());// Redirige vers la connexion après activation
+      Get.offAll(const LoginScreen());// Redirige vers la connexion après activation
     }
   }
 
@@ -148,7 +148,7 @@ class LoginController extends GetxController {
       Fluttertoast.showToast(msg: response["error"], backgroundColor: Colors.red);
     } else {
       Fluttertoast.showToast(msg: "Un OTP a été envoyé.", backgroundColor: Colors.green);
-      Get.to(() => VerifScreen());
+      Get.to(() => const VerifScreen());
       startResendTimer();
     }
   }
@@ -172,7 +172,7 @@ class LoginController extends GetxController {
     } else {
       Fluttertoast.showToast(msg: "Mot de passe réinitialisé !", backgroundColor: Colors.green);
     
-      Get.offAll(LoginScreen());
+      Get.offAll(const LoginScreen());
     }
   }
 

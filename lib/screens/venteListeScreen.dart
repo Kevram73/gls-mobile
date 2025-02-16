@@ -164,7 +164,7 @@ class _VenteListScreenState extends State<VenteListScreen> {
   Widget _buildVenteCard(Map<String, dynamic> vente) {
     return InkWell(
       onTap: (){
-        Get.to(() => DetailsVenteScreen());
+        Get.to(() => const DetailsVenteScreen());
       },
       child: Card(
         elevation: 2,

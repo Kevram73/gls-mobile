@@ -1,5 +1,6 @@
 class Urls {
-  static const baseUrl = "http://192.168.1.79:8000/api";
+  // static const baseUrl = "http://192.168.1.68:8000/api";
+  static const baseUrl = "https://api.galorelotoservices.com/api";
 
   // 🔐 Authentification
   static const registerUrl = "$baseUrl/register";
@@ -12,10 +13,8 @@ class Urls {
   // 👤 Utilisateurs
   static const userProfileUrl = "$baseUrl/user/profile";
   static const updateUserUrl = "$baseUrl/user/update";
-  static const changePasswordUrl = "$baseUrl/user/change-password";
   static const deleteUserUrl = "$baseUrl/user/delete";
   static const usersListUrl = "$baseUrl/users";
-  static const userByIdUrl = "$baseUrl/users/{id}"; // Remplacer {id} dynamiquement
 
   // 📩 Messages (Chat)
   static const sendMessageUrl = "$baseUrl/messages/send";
@@ -41,7 +40,7 @@ class Urls {
   static const updatePointOfSaleUrl = "$baseUrl/point-of-sales/{id}";
   static const deletePointOfSaleUrl = "$baseUrl/point-of-sales/{id}";
   static const activePointsUrl = "$baseUrl/point-of-sales/active";
-  static const pointOfSaleUsersUrl = "$baseUrl/point-of-sales/{id}/users";
+  static const pointOfSaleUsersUrl = "$baseUrl/point-of-sales/users";
 
   // 📰 Journaux
   static const journalsListUrl = "$baseUrl/journals";
@@ -66,9 +65,10 @@ class Urls {
   static const typeUsersListUrl = "$baseUrl/type-users";
   static const createTypeUserUrl = "$baseUrl/type-users";
   static const typeUserByIdUrl = "$baseUrl/type-users/{id}";
-  static const updateTypeUserUrl = "$baseUrl/type-users/{id}";
-  static const deleteTypeUserUrl = "$baseUrl/type-users/{id}";
 
   static const dashboardUrl = "$baseUrl/dashboard";
+  static const changePasswordUrl = "$baseUrl/change-password";
+  static const changeUserImageUrl = "$baseUrl/change-user-image";
+
 
 }

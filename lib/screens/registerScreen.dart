@@ -106,7 +106,7 @@ class RegisterScreen extends StatelessWidget {
     return TextField(
       controller: controller,
       decoration:
-          InputDecoration(border: OutlineInputBorder(), hintText: hintText),
+          InputDecoration(border: const OutlineInputBorder(), hintText: hintText),
       keyboardType: keyboardType,
     );
   }

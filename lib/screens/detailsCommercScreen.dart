@@ -70,11 +70,11 @@ class CommercialDetailScreen extends StatelessWidget {
           onPressed: () {},
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
-            side: BorderSide(color: Coloors.primaryColor),
+            side: const BorderSide(color: Coloors.primaryColor),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           ),
-          child: Text("Détails", style: TextStyle(color: Coloors.primaryColor)),
+          child: const Text("Détails", style: TextStyle(color: Coloors.primaryColor)),
         ),
       ],
     );

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:gls/screens/introScreen.dart';
-import 'package:gls/screens/loginScreen.dart';
 
 void main() async {
   await GetStorage.init(); // Initialiser GetStorage
@@ -21,7 +20,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: IntroScreen(),
+      home: const IntroScreen(),
     );
   }
 }

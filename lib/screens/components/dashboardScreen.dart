@@ -6,7 +6,7 @@ import 'package:gls/screens/commerciauxScreen.dart';
 import 'package:gls/screens/notificationsScreen.dart';
 
 class DashboardScreen extends StatelessWidget {
-  final DashboardController controller = Get.find<DashboardController>();
+  final DashboardController controller = Get.put(DashboardController());
 
   DashboardScreen({super.key});
 
@@ -34,6 +34,8 @@ class DashboardScreen extends StatelessWidget {
                 _buildDashboardStats(),
                 const SizedBox(height: 20),
                 _buildActionButton("Liste des ventes", Icons.list, controller.goToVenteList),
+                const SizedBox(height: 10),
+                _buildCompleteButton("Liste des points de ventes", Icons.list, controller.goToPointOfSale),
                 const SizedBox(height: 20),
                 _buildStockInfo(),
                 const SizedBox(height: 20),
@@ -61,8 +63,8 @@ class DashboardScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("${controller.user.value['nom']} ${controller.user.value['prenom']}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                Text("Bienvenue !", style: TextStyle(fontSize: 14, color: Colors.grey)),
+                Text("${controller.user.value!.nom} ${controller.user.value!.prenom}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const Text("Bienvenue !", style: TextStyle(fontSize: 14, color: Colors.grey)),
               ],
             ),
           ],
@@ -102,7 +104,7 @@ class DashboardScreen extends StatelessWidget {
   /// 📌 **Reusable Statistic Card**
   Widget _buildStatCard(String title, int value) {
     return Expanded(
-      child: Obx(() => Container(
+      child: Container(
             margin: const EdgeInsets.all(5),
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
@@ -116,7 +118,7 @@ class DashboardScreen extends StatelessWidget {
                 Text(value.toString(), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ],
             ),
-          )),
+          ),
     );
   }
 
@@ -184,12 +186,39 @@ class DashboardScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: onPressed,
                 icon: Icon(icon, color: Coloors.primaryColor),
-                label: Text("Voir plus", style: TextStyle(color: Coloors.primaryColor)),
+                label: const Text("Voir plus", style: TextStyle(color: Coloors.primaryColor)),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Coloors.primaryColor),
+                  side: const BorderSide(color: Coloors.primaryColor),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                 ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompleteButton(String title, IconData icon, VoidCallback onPressed) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: onPressed,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                ),
+                icon: Icon(icon, color: Colors.white),
+                label: const Text("Voir plus", style: TextStyle(color: Colors.white)),
+                
               ),
             ),
           ],

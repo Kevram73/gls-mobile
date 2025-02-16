@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:gls/helpers/coloors.dart';
 
 class MessageBoxScreen extends StatefulWidget {
@@ -46,13 +45,13 @@ class _MessageBoxScreenState extends State<MessageBoxScreen> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      title: Row(
+      title: const Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             backgroundImage: AssetImage("assets/images/user.webp"),
           ),
-          const SizedBox(width: 10),
-          const Text("Karen Den", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(width: 10),
+          Text("Karen Den", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ],
       ),
       actions: [
@@ -83,7 +82,7 @@ class _MessageBoxScreenState extends State<MessageBoxScreen> {
               children: [
                 Text(message["text"], style: TextStyle(color: message["isMe"] ? Colors.white : Colors.black)),
                 const SizedBox(height: 5),
-                Text(message["time"], style: TextStyle(fontSize: 12, color: Colors.black54)),
+                Text(message["time"], style: const TextStyle(fontSize: 12, color: Colors.black54)),
               ],
             ),
           ),

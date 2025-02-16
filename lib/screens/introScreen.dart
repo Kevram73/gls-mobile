@@ -9,11 +9,11 @@ class IntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     IntroController controller = Get.put(IntroController());
-    return SafeArea(
+    return const SafeArea(
       child: Scaffold(
         backgroundColor: Coloors.primaryColor,
         body: Center(
-          child: const Text(
+          child: Text(
             "Galore Loto Services",
             style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: Coloors.whiteColor),
           ),

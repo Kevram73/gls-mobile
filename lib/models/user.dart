@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class User {
   final int id;
   final String nom;
@@ -8,10 +6,11 @@ class User {
   final int typeUserId;
   final String email;
   final bool actif;
-  final bool twoFactorEnabled;
-  final bool isCommercial;
   final int? pointOfSaleId;
+  final bool isCommercial;
   final int stockJournal;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   User({
     required this.id,
@@ -21,13 +20,13 @@ class User {
     required this.typeUserId,
     required this.email,
     required this.actif,
-    required this.twoFactorEnabled,
-    required this.isCommercial,
     this.pointOfSaleId,
+    required this.isCommercial,
     required this.stockJournal,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
-  // Convertir JSON en Objet User
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
@@ -36,33 +35,12 @@ class User {
       numPhone: json['num_phone'],
       typeUserId: json['type_user_id'],
       email: json['email'],
-      actif: json['actif'] ?? false,
-      twoFactorEnabled: json['two_factor_enabled'] ?? false,
-      isCommercial: json['is_commercial'] ?? false,
+      actif: json['actif'] == 1,
       pointOfSaleId: json['point_of_sale_id'],
-      stockJournal: json['stock_journal'] ?? 0,
+      isCommercial: json['is_commercial'],
+      stockJournal: json['stock_journal'],
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
     );
-  }
-
-  // Convertir Objet User en JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'nom': nom,
-      'prenom': prenom,
-      'num_phone': numPhone,
-      'type_user_id': typeUserId,
-      'email': email,
-      'actif': actif,
-      'two_factor_enabled': twoFactorEnabled,
-      'is_commercial': isCommercial,
-      'point_of_sale_id': pointOfSaleId,
-      'stock_journal': stockJournal,
-    };
-  }
-
-  // Convertir une liste JSON en liste d'objets User
-  static List<User> fromJsonList(String str) {
-    return List<User>.from(json.decode(str).map((x) => User.fromJson(x)));
   }
 }

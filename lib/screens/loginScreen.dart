@@ -70,7 +70,7 @@ class LoginScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () => Get.to(() => ForgotPasswordScreen()),
+                    onPressed: () => Get.to(() => const ForgotPasswordScreen()),
                     child: const Text("Mot de passe oublié ?"),
                   ),
                 ],
@@ -98,7 +98,7 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   const Text("Vous n'avez pas de compte ? "),
                   GestureDetector(
-                    onTap: () => Get.to(() => RegisterScreen()),
+                    onTap: () => Get.to(() => const RegisterScreen()),
                     child: const Text("S’inscrire", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
                   ),
                 ],

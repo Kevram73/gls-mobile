@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gls/controllers/notificationController.dart';
-import 'package:gls/helpers/coloors.dart';
 import 'package:gls/models/notification.dart';
 import 'addNotificationScreen.dart';
 

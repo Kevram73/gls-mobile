@@ -17,20 +17,22 @@ class HomeAdminScreen extends StatelessWidget {
   // Instanciation du controller
   final DashboardController controller = Get.put(DashboardController());
   final storage = GetStorage();
+
+  HomeAdminScreen({super.key});
   @override
   Widget build(BuildContext context) {
     final kTabPages = [
       DashboardScreen(),
-      MessagerieScreen(),
-      NotificationAdminScreen(),
-      SettingScreen(),
+      const MessagerieScreen(),
+      const NotificationAdminScreen(),
+      const SettingScreen(),
     ];
     
     final kBottomNavBarItems = [
-      BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.home, size: 20), label: 'Dashboard'),
-      BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.message, size: 20), label: "Messagerie"),
-      BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.bell, size: 20), label: "Notifications"),
-      BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.cog, size: 20), label: "Paramètres"),
+      const BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.home, size: 20), label: 'Dashboard'),
+      const BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.message, size: 20), label: "Messagerie"),
+      const BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.bell, size: 20), label: "Notifications"),
+      const BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.cog, size: 20), label: "Paramètres"),
     ];
 
     assert(kTabPages.length == kBottomNavBarItems.length);
@@ -55,7 +57,7 @@ class HomeAdminScreen extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
         backgroundColor: Coloors.primaryColor,
         onPressed: () {
-          Get.to(NewVenteScreen());
+          Get.to(const NewVenteScreen());
         }, // Action à définir
         child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),

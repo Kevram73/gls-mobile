@@ -7,7 +7,7 @@ import 'package:gls/screens/detailsCommercScreen.dart';
 class CommercialListScreen extends StatelessWidget {
   final UsersController controller = Get.put(UsersController());
 
-  const CommercialListScreen({super.key});
+  CommercialListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -7,7 +7,7 @@ import 'package:gls/screens/editPointOfSaleScreen.dart';
 class PointOfSaleListScreen extends StatelessWidget {
   final PointOfSaleController controller = Get.put(PointOfSaleController());
 
-  const PointOfSaleListScreen({super.key});
+  PointOfSaleListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:gls/controllers/posController.dart';
 import 'package:gls/helpers/coloors.dart';
 import 'package:gls/screens/editPointOfSaleScreen.dart';
+import 'package:gls/screens/newPointOfSaleScreen.dart';
 
 class PointOfSaleListScreen extends StatelessWidget {
   final PointOfSaleController controller = Get.put(PointOfSaleController());
@@ -13,6 +14,7 @@ class PointOfSaleListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Coloors.primaryColor,
         title: const Text("Points de Vente", style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         leading: IconButton(
@@ -22,17 +24,22 @@ class PointOfSaleListScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Coloors.primaryColor,
-        onPressed: () => controller.fetchPointsOfSale(),
-        child: const Icon(Icons.refresh),
+        onPressed: () => Get.to(() => RegisterPointOfSaleScreen()),
+        child: const Icon(Icons.add),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildSearchBar(),
-            const SizedBox(height: 15),
-            Expanded(child: _buildPointOfSaleList()),
-          ],
+      body: RefreshIndicator(
+          onRefresh: () async {
+            await controller.fetchPointsOfSale();
+          },
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              _buildSearchBar(),
+              const SizedBox(height: 15),
+              Expanded(child: _buildPointOfSaleList()),
+            ],
+          ),
         ),
       ),
     );
@@ -72,8 +79,8 @@ class PointOfSaleListScreen extends StatelessWidget {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(pos.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  _buildStatusIndicator(pos.isActive == 1),
+                  Text(pos.name!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  
                 ],
               ),
               subtitle: Column(
@@ -82,6 +89,8 @@ class PointOfSaleListScreen extends StatelessWidget {
                   Text("${pos.address ?? "Adresse inconnue"}, ${pos.city}"),
                   Text("Propriétaire : ${pos.owner ?? "Inconnu"}",
                       style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                      const SizedBox(height: 10),
+                  _buildStatusIndicator(pos.isActive == 1),
                 ],
               ),
               trailing: Row(
@@ -95,7 +104,7 @@ class PointOfSaleListScreen extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => controller.deletePointOfSale(pos.id),
+                    onPressed: () => controller.deletePointOfSale(pos.id!),
                   ),
                 ],
               ),

@@ -1,30 +1,30 @@
 class User {
-  final int id;
-  final String nom;
-  final String prenom;
-  final String numPhone;
-  final int typeUserId;
-  final String email;
-  final bool actif;
+  final int? id;
+  final String? nom;
+  final String? prenom;
+  final String? numPhone;
+  final int? typeUserId;
+  final String? email;
+  final bool? actif;
   final int? pointOfSaleId;
-  final bool isCommercial;
-  final int stockJournal;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final bool? isCommercial;
+  final int? stockJournal;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   User({
-    required this.id,
-    required this.nom,
-    required this.prenom,
-    required this.numPhone,
-    required this.typeUserId,
-    required this.email,
-    required this.actif,
+    this.id,
+    this.nom,
+    this.prenom,
+    this.numPhone,
+    this.typeUserId,
+    this.email,
+    this.actif,
     this.pointOfSaleId,
-    required this.isCommercial,
-    required this.stockJournal,
-    required this.createdAt,
-    required this.updatedAt,
+    this.isCommercial,
+    this.stockJournal,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -35,12 +35,12 @@ class User {
       numPhone: json['num_phone'],
       typeUserId: json['type_user_id'],
       email: json['email'],
-      actif: json['actif'] == 1,
+      actif: json['actif'] == true,
       pointOfSaleId: json['point_of_sale_id'],
-      isCommercial: json['is_commercial'],
+      isCommercial: json['is_commercial'] == true,
       stockJournal: json['stock_journal'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
     );
   }
 }

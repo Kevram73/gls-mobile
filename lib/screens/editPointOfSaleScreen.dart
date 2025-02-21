@@ -13,20 +13,20 @@ class EditPointOfSaleScreen extends StatelessWidget {
   final RxInt isActive = 1.obs;
 
   EditPointOfSaleScreen({super.key, required PointOfSale pointOfSale}) {
-    nameController.text = pointOfSale.name;
+    nameController.text = pointOfSale.name!;
     addressController.text = pointOfSale.address!;
-    cityController.text = pointOfSale.city;
-    selectedManager.value = pointOfSale.owner;
-    isActive.value = pointOfSale.isActive;
+    cityController.text = pointOfSale.city!;
+    selectedManager.value = pointOfSale.owner!;
+    isActive.value = (pointOfSale.isActive ?? false) ? 1 : 0; // Correction ici
   }
 
   void _updatePointOfSale() {
     final String name = nameController.text.trim();
     final String address = addressController.text.trim();
     final String city = cityController.text.trim();
-    final String managerName = selectedManager.value;
+    final String managerId = selectedManager.value;
 
-    if (name.isEmpty || city.isEmpty || managerName.isEmpty) {
+    if (name.isEmpty || city.isEmpty || managerId.isEmpty) {
       Get.snackbar("Erreur", "Le nom, la ville et le manager sont obligatoires",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
@@ -40,45 +40,55 @@ class EditPointOfSaleScreen extends StatelessWidget {
       'address': address,
       'city': city,
       'isActive': isActive.value,
-      'owner': managerName,
+      'owner': managerId,
     };
     var updateData = PointOfSale.fromJson(updatedPointOfSale);
 
-
-    controller.editPointOfSale(updateData.id, updateData);
+    controller.editPointOfSale(updateData.id!, updateData);
     Get.back();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Modifier le Point de Vente", style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTextField(nameController, "Nom du point de vente"),
-            const SizedBox(height: 10),
-            _buildTextField(addressController, "Adresse (optionnelle)"),
-            const SizedBox(height: 10),
-            _buildTextField(cityController, "Ville"),
-            const SizedBox(height: 10),
-            _buildManagerDropdown(),
-            const SizedBox(height: 15),
-            _buildStatusSwitch(),
-            const SizedBox(height: 20),
-            _buildSaveButton(),
-          ],
-        ),
-      ),
+    return FutureBuilder(
+      future: controller.getUsers(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text("Erreur: ${snapshot.error}"));
+        } else {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text("Modifier le Point de Vente", style: TextStyle(fontWeight: FontWeight.bold)),
+              centerTitle: true,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Get.back(),
+              ),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildTextField(nameController, "Nom du point de vente"),
+                  const SizedBox(height: 10),
+                  _buildTextField(addressController, "Adresse (optionnelle)"),
+                  const SizedBox(height: 10),
+                  _buildTextField(cityController, "Ville"),
+                  const SizedBox(height: 10),
+                  _buildManagerDropdown(),
+                  const SizedBox(height: 15),
+                  _buildStatusSwitch(),
+                  const SizedBox(height: 20),
+                  _buildSaveButton(),
+                ],
+              ),
+            ),
+          );
+        }
+      },
     );
   }
 

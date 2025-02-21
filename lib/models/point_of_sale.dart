@@ -1,22 +1,26 @@
 import 'dart:convert';
 
 class PointOfSale {
-  final int id;
-  final String name;
+  final int? id;
+  final String? name;
   final String? address;
-  final String city;
-  final int isActive;
-  final int ownerId;
-  final String owner;
+  final String? city;
+  final bool? isActive;
+  final int? ownerId;
+  final String? owner;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   PointOfSale({
-    required this.id,
-    required this.name,
+    this.id,
+    this.name,
     this.address,
-    required this.city,
-    required this.isActive,
-    required this.ownerId,
-    required this.owner,
+    this.city,
+    this.isActive,
+    this.ownerId,
+    this.owner,
+    this.createdAt,
+    this.updatedAt
   });
 
   factory PointOfSale.fromJson(Map<String, dynamic> json) {
@@ -28,6 +32,8 @@ class PointOfSale {
       isActive: json['is_active'],
       ownerId: json['owner_id'],
       owner: json['owner'],
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
     );
   }
 
@@ -40,6 +46,8 @@ class PointOfSale {
       'is_active': isActive,
       'owner_id': ownerId,
       'owner': owner,
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
     };
   }
 

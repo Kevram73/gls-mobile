@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:gls/helpers/launchReq.dart';
 import 'package:gls/helpers/urls.dart';
+import 'package:gls/models/type_user.dart';
 import 'package:gls/models/user.dart';
 
 class UsersController extends GetxController {
@@ -13,10 +14,12 @@ class UsersController extends GetxController {
 
   final RxString searchQuery = ''.obs;
   final RxBool isLoading = false.obs;
+  final RxList<TypeUser> typeUsers = <TypeUser>[].obs;
 
   @override
   void onInit() {
     fetchUsers();
+    fetchTypeUsers();
     super.onInit();
   }
 
@@ -41,12 +44,24 @@ class UsersController extends GetxController {
     }
   }
 
+  Future<void> fetchTypeUsers() async {
+    isLoading.value = true;
+    final response = await apiClient.getRequest(Urls.typeUsersOthersUrl, headers: _authHeaders());
+    isLoading.value = false;
+
+    if (response != null && response is List) {
+      typeUsers.assignAll(response.map((json) => TypeUser.fromJson(json)).toList());
+    } else {
+      _showToast(response?["message"] ?? "Erreur lors du chargement des types d'utilisateur", error: true);
+    }
+  }
+
   List<User> filteredUsersByType(int typeUserId) {
     return users.where((user) {
       return user.typeUserId == typeUserId &&
-          (user.nom.toLowerCase().contains(searchQuery.value) ||
-           user.prenom.toLowerCase().contains(searchQuery.value) ||
-           user.email.toLowerCase().contains(searchQuery.value));
+          (user.nom!.toLowerCase().contains(searchQuery.value) ||
+           user.prenom!.toLowerCase().contains(searchQuery.value) ||
+           user.email!.toLowerCase().contains(searchQuery.value));
     }).toList();
   }
 
@@ -104,9 +119,9 @@ class UsersController extends GetxController {
   /// 🔍 **Filter Users Based on Search Query**
   List<User> get filteredUsers {
     return users.where((user) {
-      return user.nom.toLowerCase().contains(searchQuery.value) ||
-             user.prenom.toLowerCase().contains(searchQuery.value) ||
-             user.email.toLowerCase().contains(searchQuery.value);
+      return user.nom!.toLowerCase().contains(searchQuery.value) ||
+             user.prenom!.toLowerCase().contains(searchQuery.value) ||
+             user.email!.toLowerCase().contains(searchQuery.value);
     }).toList();
   }
 

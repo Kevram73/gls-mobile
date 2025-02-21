@@ -40,7 +40,7 @@ class Urls {
   static const updatePointOfSaleUrl = "$baseUrl/point-of-sales/{id}";
   static const deletePointOfSaleUrl = "$baseUrl/point-of-sales/{id}";
   static const activePointsUrl = "$baseUrl/point-of-sales/active";
-  static const pointOfSaleUsersUrl = "$baseUrl/point-of-sales/users";
+  static const pointOfSaleUsersUrl = "$baseUrl/users/no-pos";
 
   // 📰 Journaux
   static const journalsListUrl = "$baseUrl/journals";
@@ -63,6 +63,7 @@ class Urls {
 
   // 👥 Type Utilisateur
   static const typeUsersListUrl = "$baseUrl/type-users";
+  static const typeUsersOthersUrl = "$baseUrl/type-users/others";
   static const createTypeUserUrl = "$baseUrl/type-users";
   static const typeUserByIdUrl = "$baseUrl/type-users/{id}";
 

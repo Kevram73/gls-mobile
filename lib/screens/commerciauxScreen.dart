@@ -2,25 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gls/controllers/usersController.dart';
 import 'package:gls/models/user.dart';
+import 'package:gls/screens/addUserScreen.dart';
 import 'package:gls/screens/detailsCommercScreen.dart';
 
-class CommercialListScreen extends StatelessWidget {
+class CommercialListScreen extends StatefulWidget {
+  const CommercialListScreen({super.key});
+
+  @override
+  _CommercialListScreenState createState() => _CommercialListScreenState();
+}
+
+class _CommercialListScreenState extends State<CommercialListScreen> {
   final UsersController controller = Get.put(UsersController());
 
-  CommercialListScreen({super.key});
+  @override
+  void initState() {
+    super.initState();
+    controller.fetchUsers();
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, // Assurez-vous que nous avons bien 3 onglets
+      length: 3, // Managers, Commerciaux, Clients
       child: Scaffold(
         appBar: _buildAppBar(),
-        body: Column(
-          children: [
-            _buildTabBar(),
-            Expanded(child: _buildTabView()),
-          ],
-        ),
+        body: _buildTabView(),
       ),
     );
   }
@@ -35,29 +42,21 @@ class CommercialListScreen extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Get.to(() => AddUserScreen());
+          },
           child: const Text("Ajouter", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
         ),
       ],
       bottom: const TabBar(
+        labelColor: Colors.black,
+        indicatorColor: Colors.green,
         tabs: [
           Tab(text: "Managers"),
           Tab(text: "Commerciaux"),
-          Tab(text: "Clients"), // Correction : s'assurer que Clients est bien ajouté
+          Tab(text: "Clients"),
         ],
       ),
-    );
-  }
-
-  Widget _buildTabBar() {
-    return const TabBar(
-      labelColor: Colors.black,
-      indicatorColor: Colors.green,
-      tabs: [
-        Tab(text: "Managers"),
-        Tab(text: "Commerciaux"),
-        Tab(text: "Clients"),
-      ],
     );
   }
 
@@ -94,11 +93,9 @@ class CommercialListScreen extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
           leading: const CircleAvatar(backgroundColor: Colors.grey, child: Icon(Icons.person, color: Colors.white)),
           title: Text("${user.nom} ${user.prenom}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-          subtitle: Text(user.email, style: const TextStyle(color: Colors.grey)),
+          subtitle: Text(user.email ?? "Aucun email", style: const TextStyle(color: Colors.grey)),
           trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-          onTap: () {
-            Get.to(() => CommercialDetailScreen());
-          },
+          onTap: () => Get.to(() => CommercialDetailScreen(), arguments: user),
         );
       },
     );

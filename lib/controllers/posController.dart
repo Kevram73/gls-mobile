@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -45,12 +47,24 @@ class PointOfSaleController extends GetxController {
   }
 
   Future<void> addPointOfSale(PointOfSale pos) async {
+    // Vérifiez si le nom existe déjà
+    if (pointsOfSale.any((existingPos) => existingPos.name == pos.name)) {
+      _showToast("Le nom du point de vente existe déjà", error: true);
+      return;
+    }
+
+    log("Données envoyées: ${pos.toJson()}");
     final response = await apiClient.postRequest(Urls.pointOfSalesListUrl, pos.toJson(), headers: _authHeaders());
+    log("Réponse de l'API: $response");
 
     if (response != null && response["error"] == null) {
       pointsOfSale.add(PointOfSale.fromJson(response));
       _showToast(response["message"] ?? "Point de vente ajouté avec succès");
+    } else if (response != null && response["errors"] != null) {
+      log("Erreur lors de l'ajout du point de vente: ${response["errors"]}");
+      _showToast("Erreur: ${response["errors"]["name"]?.first ?? "Impossible d'ajouter le point de vente"}", error: true);
     } else {
+      log("Erreur lors de l'ajout du point de vente: ${response?["message"]}");
       _showToast(response?["message"] ?? "Impossible d'ajouter le point de vente", error: true);
     }
   }
@@ -92,19 +106,21 @@ class PointOfSaleController extends GetxController {
       Urls.pointOfSaleUsersUrl,
       headers: _authHeaders(),
     );
+    log(response.toString());
 
-    if (response != null && response["error"] == null) {
+    if (response != null && response is List) {
       users.assignAll(response.map((json) => User.fromJson(json)).toList());
-      _showToast(response["message"] ?? "Point de vente supprimé");
+      log(users.toString());
+      _showToast("Utilisateurs chargés avec succès");
     } else {
-      _showToast(response?["message"] ?? "Impossible de supprimer le point de vente", error: true);
+      _showToast(response?["message"] ?? "Impossible de charger les utilisateurs", error: true);
     }
   }
 
   List<PointOfSale> get filteredPoints {
     return pointsOfSale.where((pos) {
-      return pos.name.toLowerCase().contains(searchQuery.value) ||
-             (pos.owner.toLowerCase() ?? "").contains(searchQuery.value);
+      return pos.name!.toLowerCase().contains(searchQuery.value) ||
+             (pos.owner!.toLowerCase()).contains(searchQuery.value);
     }).toList();
   }
 

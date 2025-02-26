@@ -7,7 +7,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:gls/helpers/launchReq.dart';
 import 'package:gls/helpers/urls.dart';
+import 'package:gls/models/journal.dart';
 import 'package:gls/models/user.dart';
+import 'package:gls/screens/journalScreen.dart';
 import 'package:gls/screens/loginScreen.dart';
 import 'package:gls/screens/pointOfSaleListScreen.dart';
 import 'package:gls/screens/venteListeScreen.dart';
@@ -26,6 +28,7 @@ class DashboardController extends GetxController {
   var totalJournaux = 0.obs;
   var totalVentes = 0.obs;
   var stockRestant = 0.obs;
+  var totalPlaintes = 0.obs;
   var commerciaux = [].obs;
   var isLoading = false.obs; 
   var userImage = Rxn<File>();
@@ -34,6 +37,10 @@ class DashboardController extends GetxController {
   void onInit() {
     super.onInit();
     fetchDashboardData(); // Charger les données au démarrage
+  }
+
+  void goToJournalList(){
+    Get.to(() => const JournalScreen());
   }
 
 
@@ -69,6 +76,7 @@ class DashboardController extends GetxController {
     // 📌 Stockage des données dans des variables observables
     if (response["user"] != null){
       user.value = User.fromJson(response["user"]);
+      storage.write("user_id", response["user"]["id"]);
     }
     
     totalClients.value = response["total_clients"];
@@ -76,6 +84,7 @@ class DashboardController extends GetxController {
     totalJournaux.value = response["total_journaux"];
     totalVentes.value = response["total_ventes"];
     stockRestant.value = response["stock_restant"];
+    totalPlaintes.value = response["total_plaintes"];
 
     // Vérifier si la liste de commerciaux est disponible
     // if (response["commerciaux"] != null && response["commerciaux"] is List) {
@@ -97,7 +106,7 @@ class DashboardController extends GetxController {
   }
 
   void goToVenteList(){
-    Get.to(() => const VenteListScreen());
+    Get.to(() => VenteListScreen());
   }
 
   void goToPointOfSale(){

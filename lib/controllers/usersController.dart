@@ -1,16 +1,26 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:gls/helpers/launchReq.dart';
 import 'package:gls/helpers/urls.dart';
+import 'package:gls/models/journal.dart';
 import 'package:gls/models/type_user.dart';
 import 'package:gls/models/user.dart';
+import 'package:gls/models/vente.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class UsersController extends GetxController {
   final storage = GetStorage();
   final RxList<User> users = <User>[].obs;
+  final RxList<Journal> journals = <Journal>[].obs;
+  final RxList<User> commerciaux = <User>[].obs;
   final LaunchReq apiClient = LaunchReq();
+  final RxList<Vente> ventes = <Vente>[].obs;
 
   final RxString searchQuery = ''.obs;
   final RxBool isLoading = false.obs;
@@ -20,6 +30,7 @@ class UsersController extends GetxController {
   void onInit() {
     fetchUsers();
     fetchTypeUsers();
+    fetchJournals();
     super.onInit();
   }
 
@@ -44,9 +55,46 @@ class UsersController extends GetxController {
     }
   }
 
+  Future<void> fetchJournals() async {
+    isLoading.value = true;
+    final response = await apiClient.getRequest(Urls.journalsListUrl, headers: _authHeaders());
+    isLoading.value = false;
+
+    if (response != null && response is List) {
+      journals.assignAll(response.map((json) => Journal.fromJson(json)).toList());
+    } else {
+      _showToast(response?["message"] ?? "Erreur lors du chargement des utilisateurs", error: true);
+    }
+  }
+
+  Future<void> fetchUserVentes(int id) async {
+    isLoading.value = true;
+    final response = await apiClient.getRequest(Urls.ventesBySellerUrl.replaceFirst("{sellerId}", id.toString()), headers: _authHeaders());
+    isLoading.value = false;
+
+    if (response != null && response is List) {
+      ventes.assignAll(response.map((json) => Vente.fromJson(json)).toList());
+    } else {
+      _showToast(response?["message"] ?? "Erreur lors du chargement des ventes", error: true);
+    }
+  }
+
+  Future<void> fetchCommerciaux() async {
+    isLoading.value = true;
+    final response = await apiClient.getRequest('${Urls.usersListWithTypeUrl}/3', headers: _authHeaders());
+    isLoading.value = false;
+    log("$response");
+
+    if (response != null && response is List) {
+      commerciaux.assignAll(response.map((json) => User.fromJson(json)).toList());
+    } else {
+      _showToast(response?["message"] ?? "Erreur lors du chargement des utilisateurs", error: true);
+    }
+  }
+
   Future<void> fetchTypeUsers() async {
     isLoading.value = true;
-    final response = await apiClient.getRequest(Urls.typeUsersOthersUrl, headers: _authHeaders());
+    final response = await apiClient.getRequest(Urls.typeUsersListUrl, headers: _authHeaders());
     isLoading.value = false;
 
     if (response != null && response is List) {
@@ -74,6 +122,8 @@ class UsersController extends GetxController {
       "num_phone": numPhone,
       "type_user_id": typeUserId,
     }, headers: _authHeaders());
+
+    log("$response");
 
     if (response != null && response["error"] == null) {
       users.add(User.fromJson(response));
@@ -123,6 +173,47 @@ class UsersController extends GetxController {
              user.prenom!.toLowerCase().contains(searchQuery.value) ||
              user.email!.toLowerCase().contains(searchQuery.value);
     }).toList();
+  }
+
+  /// 📄 **Export Commerciaux List to PDF**
+  Future<void> exportCommerciauxToPdf() async {
+    try {
+      await fetchCommerciaux();
+      await Printing.info(); // Ensure the plugin is initialized
+      final pdf = pw.Document();
+
+      pdf.addPage(
+        pw.Page(
+          build: (pw.Context context) {
+            return pw.ListView.builder(
+              itemCount: commerciaux.length,
+              itemBuilder: (context, index) {
+                final user = commerciaux[index];
+                return pw.Container(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text("Nom: ${user.nom} ${user.prenom}", style: pw.TextStyle(fontSize: 12)),
+                      pw.Text("Email: ${user.email}", style: pw.TextStyle(fontSize: 12)),
+                      pw.Text("Téléphone: ${user.numPhone}", style: pw.TextStyle(fontSize: 12)),
+                      pw.Text("Actif: ${user.actif}", style: pw.TextStyle(fontSize: 12)),
+                      pw.Text("Créé le: ${user.createdAt?.toIso8601String()}", style: pw.TextStyle(fontSize: 12)),
+                      pw.Divider(),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      );
+
+      await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+    } catch (e) {
+      log("Erreur lors de l'exportation PDF: $e");
+      _showToast("Erreur lors de l'exportation PDF", error: true);
+    }
   }
 
   /// 🍞 **Show Toast Message**

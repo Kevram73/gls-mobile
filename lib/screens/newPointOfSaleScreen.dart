@@ -32,13 +32,14 @@ class RegisterPointOfSaleScreen extends StatelessWidget {
       name: name,
       address: address,
       city: city,
-      owner: selectedOwner.value.id.toString(),
+      ownerId: selectedOwner.value.id,
       isActive: isActiveValue,
     ));
 
-    Get.snackbar("Succès", "Point de vente enregistré avec succès",
-        snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+    Fluttertoast.showToast(msg: "Point de vente enregistré avec succès", backgroundColor: Colors.green, textColor: Colors.white);
     Get.back();
+    controller.fetchPointsOfSale();
+
   }
 
   @override

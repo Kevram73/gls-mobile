@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -33,10 +35,10 @@ class NotificationController extends GetxController {
     isLoading.value = true;
     final response = await apiClient.getRequest(Urls.notificationsListUrl, headers: _authHeaders());
     isLoading.value = false;
+    log(response.toString());
 
     if (response != null && response is List) {
       notifications.assignAll(response.map((json) => NotificationModel.fromJson(json)).toList());
-      saveNotifications();
     } else {
       _showToast(response?["message"] ?? "Erreur lors du chargement des notifications", error: true);
     }
@@ -53,11 +55,10 @@ class NotificationController extends GetxController {
     storage.write(storageKey, notifications.map((notif) => notif.toJson()).toList());
   }
 
-  Future<void> addNotification(String title, String description) async {
+  Future<void> addNotification(String title, String content) async {
     final newNotification = NotificationModel(
       title: title,
-      description: description,
-      date: DateTime.now(),
+      content: content,
     );
 
     final response = await apiClient.postRequest(Urls.notificationsListUrl, newNotification.toJson(), headers: _authHeaders());
@@ -74,8 +75,7 @@ class NotificationController extends GetxController {
   Future<void> editNotification(int index, String newTitle, String newDescription) async {
     final updatedNotification = NotificationModel(
       title: newTitle,
-      description: newDescription,
-      date: notifications[index].date, // Garde la date originale
+      content: newDescription,
     );
 
     final response = await apiClient.putRequest(

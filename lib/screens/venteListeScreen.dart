@@ -1,45 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gls/controllers/venteController.dart';
+import 'package:gls/helpers/coloors.dart';
+import 'package:gls/models/vente.dart';
 import 'package:gls/screens/detailsVenteScreen.dart';
 
-class VenteListScreen extends StatefulWidget {
-  const VenteListScreen({super.key});
+class VenteListScreen extends StatelessWidget {
+  final VenteController controller = Get.put(VenteController());
 
-  @override
-  _VenteListScreenState createState() => _VenteListScreenState();
-}
-
-class _VenteListScreenState extends State<VenteListScreen> {
-  final List<Map<String, dynamic>> ventes = [
-    {"title": "Vente journal", "price": 2000, "date": "12/12/2022", "quantity": 1, "status": "Non soumis"},
-    {"title": "Vente journal", "price": 8000, "date": "12/12/2022", "quantity": 4, "status": "Soumis"},
-    {"title": "Business Report", "price": 6000, "date": "12/12/2022", "quantity": 3, "status": "Soumis"},
-    {"title": "Business Report", "price": 2000, "date": "12/12/2022", "quantity": 1, "status": "Non soumis"},
-  ];
-
-  String selectedDate = "4";
-  String searchQuery = "";
-  final List<Map<String, String>> dates = [
-    {"day": "Lun", "date": "4"},
-    {"day": "Mar", "date": "5"},
-    {"day": "Mer", "date": "6"},
-    {"day": "Jeu", "date": "7"},
-    {"day": "Ven", "date": "8"},
-  ];
-
-  void _deleteVente(int index) {
-    setState(() => ventes.removeAt(index));
-    Get.snackbar("Supprimé", "Vente supprimée avec succès", snackPosition: SnackPosition.BOTTOM);
-  }
+  VenteListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text("Liste de toutes les ventes", style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Coloors.primaryColor,
+        title: const Text("Liste des ventes", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Get.back(),
         ),
       ),
@@ -48,8 +28,6 @@ class _VenteListScreenState extends State<VenteListScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildDateSelector(),
-            const SizedBox(height: 15),
             _buildSearchBar(),
             const SizedBox(height: 15),
             Expanded(child: _buildVenteList()),
@@ -59,69 +37,10 @@ class _VenteListScreenState extends State<VenteListScreen> {
     );
   }
 
-  /// 🔥 **Widget : Sélecteur de Date (Mini Calendrier)**
- Widget _buildDateSelector() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        "Choisir date",
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 10),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: dates.map((date) {
-          final String? day = date["day"];
-          final String? dateValue = date["date"];
-          final bool isSelected = selectedDate == dateValue;
-
-          return GestureDetector(
-            onTap: () {
-              if (dateValue != null) {
-                setState(() => selectedDate = dateValue);
-              }
-            },
-            child: Container(
-              width: 60,
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              margin: const EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(
-                color: isSelected ? Colors.green : Colors.grey[300],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    day ?? "",
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black54,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    dateValue ?? "",
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    ],
-  );
-}
-
   /// 🔍 **Barre de Recherche**
   Widget _buildSearchBar() {
     return TextField(
-      onChanged: (value) => setState(() => searchQuery = value),
+      onChanged: (value) => controller.searchQuery.value = value.toLowerCase(),
       decoration: InputDecoration(
         prefixIcon: const Icon(Icons.search),
         hintText: "Rechercher une vente...",
@@ -130,67 +49,72 @@ class _VenteListScreenState extends State<VenteListScreen> {
     );
   }
 
-  /// 📋 **Liste des ventes filtrées**
+  /// 📋 **Liste des ventes dynamiques**
   Widget _buildVenteList() {
-    final filteredVentes = ventes.where((vente) {
-      return vente["title"].toLowerCase().contains(searchQuery.toLowerCase());
-    }).toList();
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
 
-    if (filteredVentes.isEmpty) {
-      return const Center(child: Text("Aucune vente trouvée", style: TextStyle(fontSize: 16, color: Colors.grey)));
-    }
+      final ventes = controller.filteredVentes;
 
-    return ListView.builder(
-      itemCount: filteredVentes.length,
-      itemBuilder: (context, index) {
-        final vente = filteredVentes[index];
-        return Dismissible(
-          key: Key(vente["title"] + index.toString()),
-          direction: DismissDirection.endToStart,
-          background: Container(
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            color: Colors.red,
-            child: const Icon(Icons.delete, color: Colors.white),
-          ),
-          onDismissed: (_) => _deleteVente(index),
-          child: _buildVenteCard(vente),
-        );
-      },
-    );
+      if (ventes.isEmpty) {
+        return const Center(child: Text("Aucune vente trouvée", style: TextStyle(fontSize: 16, color: Colors.grey)));
+      }
+
+      return ListView.builder(
+        itemCount: ventes.length,
+        itemBuilder: (context, index) {
+          final vente = ventes[index];
+          return Dismissible(
+            key: Key(vente.id.toString()),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              color: Colors.red,
+              child: const Icon(Icons.delete, color: Colors.white),
+            ),
+            onDismissed: (_) => controller.deleteVente(vente.id!),
+            child: _buildVenteCard(vente),
+          );
+        },
+      );
+    });
   }
 
   /// 📰 **Carte Individuelle de Vente**
-  Widget _buildVenteCard(Map<String, dynamic> vente) {
+  Widget _buildVenteCard(Vente vente) {
     return InkWell(
-      onTap: (){
-        Get.to(() => const DetailsVenteScreen());
+      onTap: () {
+        Get.to(() => DetailsVenteScreen(vente: vente));
       },
       child: Card(
-        elevation: 2,
+        elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.only(bottom: 10),
         child: ListTile(
           contentPadding: const EdgeInsets.all(12),
-          title: Text(vente["title"], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          title: Text(vente.nbre! > 1 ? "${vente.nbre} journaux vendus" : "1 journal vendu",
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 5),
-              Text("${vente["price"]} FCFA", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black)),
-              Text("${vente["date"]} | ${vente["quantity"]} journal", style: const TextStyle(fontSize: 14, color: Colors.black54)),
+              Text("${vente.montant} FCFA", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Coloors.primaryColor)),
+              Text(vente.date.toString(), style: const TextStyle(fontSize: 14, color: Colors.black54)),
             ],
           ),
           trailing: Container(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
             decoration: BoxDecoration(
-              color: vente["status"] == "Non soumis" ? Colors.orange[100] : Colors.green[100],
+              color: vente.isPaid! ? Colors.green[100] : Colors.orange[100],
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              vente["status"],
+              vente.isPaid! ? "Payé" : "Non payé",
               style: TextStyle(
-                color: vente["status"] == "Non soumis" ? Colors.orange[900] : Colors.green[900],
+                color: vente.isPaid! ? Colors.green[900] : Colors.orange[900],
                 fontWeight: FontWeight.bold,
               ),
             ),

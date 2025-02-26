@@ -1,0 +1,2 @@
+/Users/gab/Documents/codes/gls/android/app/.cxx/Debug/5r4h62e6/x86/CMakeFiles/rebuild_cache.dir
+/Users/gab/Documents/codes/gls/android/app/.cxx/Debug/5r4h62e6/x86/CMakeFiles/edit_cache.dir

@@ -43,4 +43,21 @@ class User {
       updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'nom': nom,
+      'prenom': prenom,
+      'num_phone': numPhone,
+      'type_user_id': typeUserId,
+      'email': email,
+      'actif': actif,
+      'point_of_sale_id': pointOfSaleId,
+      'is_commercial': isCommercial,
+      'stock_journal': stockJournal,
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
+    };
+  }
 }

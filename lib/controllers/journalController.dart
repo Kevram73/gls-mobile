@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -14,11 +16,11 @@ class JournalController extends GetxController {
   final RxString searchQuery = ''.obs;
   final RxBool isLoading = false.obs;
   final String storageKey = 'journals';
+  var isSearching = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    loadJournals();  // Charger les journaux depuis GetStorage
     fetchJournals(); // Récupérer depuis l'API
   }
 
@@ -30,7 +32,7 @@ class JournalController extends GetxController {
     };
   }
 
-  /// **📥 Récupérer les journaux depuis l'API**
+
   Future<void> fetchJournals() async {
     isLoading.value = true;
     final response = await apiClient.getRequest(Urls.journalsListUrl, headers: _authHeaders());
@@ -38,69 +40,47 @@ class JournalController extends GetxController {
 
     if (response != null && response is List) {
       journals.assignAll(response.map((json) => Journal.fromJson(json)).toList());
-      saveJournals();
     } else {
       _showToast(response?["message"] ?? "Erreur lors du chargement des journaux", error: true);
     }
   }
 
-  /// **💾 Charger les journaux depuis GetStorage**
-  void loadJournals() {
-    List<dynamic>? storedJournals = storage.read<List<dynamic>>(storageKey);
-    if (storedJournals != null) {
-      journals.assignAll(storedJournals.map((json) => Journal.fromJson(json)).toList());
-    }
-  }
-
-  /// **💾 Sauvegarder les journaux dans GetStorage**
-  void saveJournals() {
-    storage.write(storageKey, journals.map((journal) => journal.toJson()).toList());
-  }
-
-  /// **➕ Ajouter un journal**
-  Future<void> addJournal(String title, double price, bool isActive) async {
+  Future<void> addJournal(String title, double price) async {
     final newJournal = Journal(
       id: DateTime.now().millisecondsSinceEpoch, // ID temporaire
       title: title,
-      price: price,
-      isActive: isActive,
-      deletedAt: null,
+      price: price.toString(),
+      isActive: 1,
     );
-
+    isLoading.value = true;
     final response = await apiClient.postRequest(Urls.journalsListUrl, newJournal.toJson(), headers: _authHeaders());
-
+    isLoading.value = false;
     if (response != null && response["error"] == null) {
       journals.add(Journal.fromJson(response));
-      saveJournals();
       _showToast(response["message"] ?? "Journal ajouté avec succès");
     } else {
       _showToast(response?["message"] ?? "Impossible d'ajouter le journal", error: true);
     }
   }
 
-  /// **✏ Modifier un journal**
-  Future<void> editJournal(int id, String newTitle, double newPrice, bool isActive) async {
+  Future<void> editJournal(int id, String newTitle, double newPrice, int isActive) async {
     final updatedJournal = Journal(
       id: id,
       title: newTitle,
-      price: newPrice,
+      price: newPrice.toString(),
       isActive: isActive,
-      deletedAt: null,
     );
 
+    isLoading.value = true;
     final response = await apiClient.putRequest(
       Urls.updateJournalUrl.replaceFirst("{id}", id.toString()),
       updatedJournal.toJson(),
       headers: _authHeaders(),
     );
+    isLoading.value = false;
 
     if (response != null && response["error"] == null) {
-      int index = journals.indexWhere((journal) => journal.id == id);
-      if (index != -1) {
-        journals[index] = Journal.fromJson(response);
-        saveJournals();
-        _showToast(response["message"] ?? "Journal mis à jour");
-      }
+      _showToast(response["message"] ?? "Journal mis à jour");
     } else {
       _showToast(response?["message"] ?? "Échec de la mise à jour", error: true);
     }
@@ -115,7 +95,6 @@ class JournalController extends GetxController {
 
     if (response != null && response["error"] == null) {
       journals.removeWhere((journal) => journal.id == id);
-      saveJournals();
       _showToast(response["message"] ?? "Journal supprimé");
     } else {
       _showToast(response?["message"] ?? "Impossible de supprimer le journal", error: true);
@@ -123,9 +102,20 @@ class JournalController extends GetxController {
   }
 
   /// **🔍 Filtrer les journaux selon le titre**
+  void toggleSearch() {
+    isSearching.value = !isSearching.value;
+    if (!isSearching.value) {
+      searchQuery.value = ""; // Réinitialise la recherche
+    }
+  }
+
+  // Fonction pour filtrer les journaux en fonction de la recherche
   List<Journal> get filteredJournals {
+    if (searchQuery.value.isEmpty) {
+      return journals;
+    }
     return journals.where((journal) {
-      return journal.title.toLowerCase().contains(searchQuery.value);
+      return journal.title!.toLowerCase().contains(searchQuery.value);
     }).toList();
   }
 

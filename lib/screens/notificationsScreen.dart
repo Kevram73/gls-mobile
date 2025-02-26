@@ -46,16 +46,16 @@ class NotificationListScreen extends StatelessWidget {
       elevation: 1,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        title: Text(notif.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(notif.title!, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(notif.description),
+            Text(notif.content!),
             const SizedBox(height: 5),
-            Text(
-              "${notif.date.day}/${notif.date.month}/${notif.date.year} - ${notif.date.hour}:${notif.date.minute}",
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            ),
+            // Text(
+            //   "${notif.date.day}/${notif.date.month}/${notif.date.year} - ${notif.date.hour}:${notif.date.minute}",
+            //   style: const TextStyle(fontSize: 12, color: Colors.grey),
+            // ),
           ],
         ),
       ),

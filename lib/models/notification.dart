@@ -1,17 +1,28 @@
 class NotificationModel {
   int? id;
-  String title;
-  String description;
-  DateTime date;
+  String? title;
+  String? content;
+  int? isRead;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
-  NotificationModel({ this.id, required this.title, required this.description, required this.date});
+  NotificationModel({
+    this.id,
+    this.title,
+    this.content,
+    this.isRead,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
       id: json['id'],
       title: json['title'],
-      description: json['description'],
-      date: DateTime.parse(json['date']), // Conversion de String à DateTime
+      content: json['content'],
+      isRead: json['is_read'],
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
     );
   }
 
@@ -19,8 +30,10 @@ class NotificationModel {
     return {
       'id': id,
       'title': title,
-      'description': description,
-      'date': date.toIso8601String(), // Conversion de DateTime à String
+      'content': content,
+      'is_read': isRead,
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
     };
   }
 }

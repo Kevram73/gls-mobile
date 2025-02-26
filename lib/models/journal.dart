@@ -1,18 +1,16 @@
 import 'dart:convert';
 
 class Journal {
-  final int id;
-  final String title;
-  final double price;
-  final bool isActive;
-  final DateTime? deletedAt;
+  final int? id;
+  final String? title;
+  final String? price;
+  final int? isActive;
 
   Journal({
-    required this.id,
-    required this.title,
-    required this.price,
-    required this.isActive,
-    this.deletedAt,
+    this.id,
+    this.title,
+    this.price,
+    this.isActive,
   });
 
   // Convertir JSON en Objet Journal
@@ -20,9 +18,8 @@ class Journal {
     return Journal(
       id: json['id'],
       title: json['title'],
-      price: (json['price'] as num).toDouble(),
-      isActive: json['is_active'] ?? false,
-      deletedAt: json['deleted_at'] != null ? DateTime.parse(json['deleted_at']) : null,
+      price: json['price'],
+      isActive: json['is_active'],
     );
   }
 
@@ -32,8 +29,7 @@ class Journal {
       'id': id,
       'title': title,
       'price': price,
-      'is_active': isActive,
-      'deleted_at': deletedAt?.toIso8601String(),
+      'is_active': isActive
     };
   }
 

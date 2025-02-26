@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gls/controllers/dashboardController.dart';
+import 'package:gls/controllers/usersController.dart';
 import 'package:gls/helpers/coloors.dart';
 import 'package:gls/screens/commerciauxScreen.dart';
 import 'package:gls/screens/notificationsScreen.dart';
 
 class DashboardScreen extends StatelessWidget {
   final DashboardController controller = Get.put(DashboardController());
+  final UsersController usersController = Get.put(UsersController());
 
   DashboardScreen({super.key});
 
@@ -71,14 +73,12 @@ class DashboardScreen extends StatelessWidget {
         ),
         Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.notifications, color: Coloors.primaryColor),
-              onPressed: () => Get.to(() => NotificationListScreen()),
-            ),
+            
             IconButton(
               icon: const Icon(Icons.search, color: Coloors.primaryColor),
               onPressed: () => Get.to(() => CommercialListScreen()),
             ),
+            
           ],
         ),
       ],
@@ -95,30 +95,29 @@ class DashboardScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildStatCard("Total Commerciaux", controller.totalClients.value),
-        _buildStatCard("Commerciaux Actifs", controller.totalClientsActifs.value),
+        Expanded(child: _buildStatCard("Total Commerciaux", controller.totalClients.value)),
+        const SizedBox(width: 10),
+        Expanded(child: _buildStatCard("Commerciaux Actifs", controller.totalClientsActifs.value)),
       ],
     );
   }
 
   /// 📌 **Reusable Statistic Card**
   Widget _buildStatCard(String title, int value) {
-    return Expanded(
-      child: Container(
-            margin: const EdgeInsets.all(5),
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                Text(title, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14, color: Colors.black54)),
-                const SizedBox(height: 5),
-                Text(value.toString(), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ),
+    return Container(
+      margin: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Text(title, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14, color: Colors.black54)),
+          const SizedBox(height: 5),
+          Text(value.toString(), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        ],
+      ),
     );
   }
 
@@ -166,9 +165,12 @@ class DashboardScreen extends StatelessWidget {
   Widget _buildActionButtons() {
     return Column(
       children: [
-        _buildActionButton("Exporter la liste des commerciaux", Icons.file_download, controller.exporterListe),
+        _buildActionButton("Catalogue des journaux", Icons.file_copy, controller.goToJournalList),
+        const SizedBox(height: 10),
+        _buildActionButton("Exporter la liste des commerciaux", Icons.file_download, usersController.exportCommerciauxToPdf),
         const SizedBox(height: 10),
         _buildActionButton("Suivre les performances des agents", Icons.bar_chart, controller.voirPerformances),
+        
       ],
     );
   }

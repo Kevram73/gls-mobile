@@ -47,6 +47,7 @@ class _CommercialListScreenState extends State<CommercialListScreen> {
           },
           child: const Text("Ajouter", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
         ),
+        
       ],
       bottom: const TabBar(
         labelColor: Colors.black,
@@ -84,18 +85,18 @@ class _CommercialListScreenState extends State<CommercialListScreen> {
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       itemCount: users.length,
       separatorBuilder: (_, __) => const SizedBox(height: 5),
       itemBuilder: (context, index) {
         final user = users[index];
         return ListTile(
-          contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
           leading: const CircleAvatar(backgroundColor: Colors.grey, child: Icon(Icons.person, color: Colors.white)),
           title: Text("${user.nom} ${user.prenom}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
           subtitle: Text(user.email ?? "Aucun email", style: const TextStyle(color: Colors.grey)),
           trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-          onTap: () => Get.to(() => CommercialDetailScreen(), arguments: user),
+          onTap: () => Get.to(() => CommercialDetailScreen(user: user), arguments: user),
         );
       },
     );

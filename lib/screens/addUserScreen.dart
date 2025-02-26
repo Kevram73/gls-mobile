@@ -19,7 +19,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
   final _prenomController = TextEditingController();
   final _emailController = TextEditingController();
   final _numPhoneController = TextEditingController();
-  int? _selectedTypeUserId;
+  TypeUser? _selectedTypeUser;
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +105,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                return DropdownButtonFormField<int>(
+                return DropdownButtonFormField<TypeUser>(
                   decoration: InputDecoration(
                     labelText: "Type d'utilisateur",
                     border: OutlineInputBorder(
@@ -113,14 +113,14 @@ class _AddUserScreenState extends State<AddUserScreen> {
                     ),
                   ),
                   items: controller.typeUsers.map((TypeUser typeUser) {
-                    return DropdownMenuItem<int>(
-                      value: typeUser.id,
+                    return DropdownMenuItem<TypeUser>(
+                      value: typeUser,
                       child: Text(typeUser.name ?? ''),
                     );
                   }).toList(),
-                  onChanged: (int? newValue) {
+                  onChanged: (TypeUser? newValue) {
                     setState(() {
-                      _selectedTypeUserId = newValue;
+                      _selectedTypeUser = newValue;
                     });
                   },
                   validator: (value) {
@@ -140,10 +140,13 @@ class _AddUserScreenState extends State<AddUserScreen> {
                       prenom: _prenomController.text,
                       email: _emailController.text,
                       numPhone: _numPhoneController.text,
-                      typeUserId: _selectedTypeUserId!,
+                      typeUserId: _selectedTypeUser!.id,
                     );
-                    controller.addUser(newUser);
-                    Get.back();
+                    controller.addUser(newUser.nom!, newUser.prenom!, newUser.email!, newUser.numPhone!, newUser.typeUserId!).then((value){
+                      controller.fetchUsers();
+                      Get.back();
+                    });
+                   
                   }
                 },
                 style: ElevatedButton.styleFrom(

@@ -21,9 +21,10 @@ class PointOfSaleController extends GetxController {
 
   @override
   void onInit() {
+    super.onInit();
     fetchPointsOfSale();
     getUsers();
-    super.onInit();
+    
 
   }
 
@@ -36,8 +37,9 @@ class PointOfSaleController extends GetxController {
   }
 
   Future<void> fetchPointsOfSale() async {
+    isLoading.value = true;
     final response = await apiClient.getRequest(Urls.pointOfSalesListUrl, headers: _authHeaders());
-
+    isLoading.value = false;
     if (response != null && response is List) {
       pointsOfSale.assignAll(response.map((json) => PointOfSale.fromJson(json)).toList());
       _showToast("Données chargées avec succès");
@@ -54,8 +56,17 @@ class PointOfSaleController extends GetxController {
     }
 
     log("Données envoyées: ${pos.toJson()}");
-    final response = await apiClient.postRequest(Urls.pointOfSalesListUrl, pos.toJson(), headers: _authHeaders());
-    log("Réponse de l'API: $response");
+    isLoading.value = true;
+    final response = await apiClient.postRequest(Urls.pointOfSalesListUrl, {
+      "name": pos.name,
+      "address": pos.address,
+      "city": pos.city,
+      "is_active": pos.isActive,
+      "manager_id": pos.ownerId,
+    }, headers: _authHeaders());
+
+    isLoading.value = false;
+    log("Réponse: $response");
 
     if (response != null && response["error"] == null) {
       pointsOfSale.add(PointOfSale.fromJson(response));
@@ -72,9 +83,17 @@ class PointOfSaleController extends GetxController {
   Future<void> editPointOfSale(int id, PointOfSale updatedPos) async {
     final response = await apiClient.putRequest(
       Urls.updatePointOfSaleUrl.replaceFirst("{id}", id.toString()),
-      updatedPos.toJson(),
+      {
+        "id": updatedPos.id,
+        "name": updatedPos.name,
+        "address": updatedPos.address,
+        "city": updatedPos.city,
+        "is_active": updatedPos.isActive,
+        "manager_id": updatedPos.ownerId,
+      },
       headers: _authHeaders(),
     );
+    log("Réponse: $response");
 
     if (response != null && response["error"] == null) {
       int index = pointsOfSale.indexWhere((pos) => pos.id == id);

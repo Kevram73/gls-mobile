@@ -15,13 +15,15 @@ class Urls {
   static const updateUserUrl = "$baseUrl/user/update";
   static const deleteUserUrl = "$baseUrl/user/delete";
   static const usersListUrl = "$baseUrl/users";
+  static const usersListWithTypeUrl = "$baseUrl/users/type";
 
   // 📩 Messages (Chat)
-  static const sendMessageUrl = "$baseUrl/messages/send";
-  static const conversationMessagesUrl = "$baseUrl/messages/conversation/{conversationId}";
-  static const deleteMessageUrl = "$baseUrl/messages/{messageId}";
-  static const markMessageReadUrl = "$baseUrl/messages/{messageId}/read";
-  static const unreadMessagesUrl = "$baseUrl/messages/unread";
+  static const String sendMessageUrl = "$baseUrl/messages/send";
+static String conversationMessagesUrl(int otherUserId) =>
+    "$baseUrl/messages/conversation/$otherUserId";
+static String deleteMessageUrl(int messageId) =>
+    "$baseUrl/messages/$messageId";
+static const String contactedUsersUrl = "$baseUrl/messages/contacted-users";
 
   // 🛒 Ventes
   static const ventesListUrl = "$baseUrl/ventes";
@@ -30,7 +32,8 @@ class Urls {
   static const updateVenteUrl = "$baseUrl/ventes/{id}";
   static const deleteVenteUrl = "$baseUrl/ventes/{id}";
   static const ventesBySellerUrl = "$baseUrl/ventes/seller/{sellerId}";
-  static const ventesByPointOfSaleUrl = "$baseUrl/ventes/point-of-sale/{pointOfSaleId}";
+  static const ventesByPointOfSaleUrl =
+      "$baseUrl/ventes/point-of-sale/{pointOfSaleId}";
   static const unpaidVentesUrl = "$baseUrl/ventes/unpaid";
 
   // 📍 Points de Vente
@@ -70,6 +73,4 @@ class Urls {
   static const dashboardUrl = "$baseUrl/dashboard";
   static const changePasswordUrl = "$baseUrl/change-password";
   static const changeUserImageUrl = "$baseUrl/change-user-image";
-
-
 }

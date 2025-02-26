@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:gls/helpers/launchReq.dart';
 import 'package:gls/helpers/urls.dart';
+import 'package:gls/models/journal.dart';
+import 'package:gls/models/user.dart';
 import 'package:gls/models/vente.dart';
 
 class VenteController extends GetxController {
@@ -11,6 +13,8 @@ class VenteController extends GetxController {
   final GetStorage storage = GetStorage();
 
   final RxList<Vente> ventes = <Vente>[].obs;
+  final RxList<User> clients = <User>[].obs;
+  final RxList<Journal> journals = <Journal>[].obs;
   final RxBool isLoading = false.obs;
   final RxString searchQuery = ''.obs;
   final String storageKey = 'ventes';
@@ -19,7 +23,9 @@ class VenteController extends GetxController {
   void onInit() {
     super.onInit();
     loadVentes();
+    fetchJournals();
     fetchVentes();
+    fetchClients();
   }
 
   Map<String, String> _authHeaders() {
@@ -37,7 +43,30 @@ class VenteController extends GetxController {
 
     if (response != null && response is List) {
       ventes.assignAll(response.map((json) => Vente.fromJson(json)).toList());
-      saveVentes();
+    } else {
+      _showToast(response?["message"] ?? "Erreur lors du chargement des ventes", error: true);
+    }
+  }
+
+  Future<void> fetchJournals() async {
+    isLoading.value = true;
+    final response = await apiClient.getRequest(Urls.journalsListUrl, headers: _authHeaders());
+    isLoading.value = false;
+
+    if (response != null && response is List) {
+      journals.assignAll(response.map((json) => Journal.fromJson(json)).toList());
+    } else {
+      _showToast(response?["message"] ?? "Erreur lors du chargement des journaux", error: true);
+    }
+  }
+
+  Future<void> fetchClients() async {
+    isLoading.value = true;
+    final response = await apiClient.getRequest(Urls.usersListUrl, headers: _authHeaders());
+    isLoading.value = false;
+
+    if (response != null && response is List) {
+      clients.assignAll(response.map((json) => User.fromJson(json)).toList());
     } else {
       _showToast(response?["message"] ?? "Erreur lors du chargement des ventes", error: true);
     }
@@ -104,7 +133,7 @@ class VenteController extends GetxController {
     return ventes.where((vente) {
       return vente.pointOfSaleId.toString().contains(searchQuery.value) ||
              vente.sellerId.toString().contains(searchQuery.value) ||
-             (vente.isPaid ? "payé" : "non payé").contains(searchQuery.value);
+             (vente.isPaid! ? "payé" : "non payé").contains(searchQuery.value);
     }).toList();
   }
 
